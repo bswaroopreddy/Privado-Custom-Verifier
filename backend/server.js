@@ -8,20 +8,8 @@ const { auth, resolver } = require("@iden3/js-iden3-auth");
 const path = require("path");
 
 const { createUniversityRequest } = require("./requestBuilder");
-const { getVerifier } = require("./verifier");
 
-// const { createVerifierDID } = require("./createVerifierDID");
 
-// async function init() {
-//   if (!process.env.VERIFIER_DID) {
-//     const did = await createVerifierDID();
-//     process.env.VERIFIER_DID = did;
-//   }
-
-//   console.log("Verifier DID:", process.env.VERIFIER_DID);
-// }
-
-// init();
 
 const app = express();
 app.use(cors());
@@ -125,67 +113,48 @@ app.post("/api/callback", async (req, res) => {
     verificationMap.set(verificationId, {
       status: "inprogress"
     });
-    // const ethURL = "https://rpc-mainnet.privado.id";
-     const ethURL = "https://rpc-amoy.polygon.technology";
-     const contractAddress = "0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124";
-        // const contractAddress = '0x3C9acB2205Aa72A05F6D77d708b5Cf85FCa3a896'
-     const keyDIR = "./keys";
 
-      const AMOY_STATE_RESOLVER = new resolver.EthStateResolver(
-            ethURL,
-            contractAddress
-      );
+    const keyDIR = "./keys";
 
-      const resolvers = {
-           ["polygon:amoy"]: AMOY_STATE_RESOLVER,
-        //     ["privado:main"]: new resolver.EthStateResolver(
-        //         "https://rpc-mainnet.privado.id",
-        //         "0x975556428F077dB5877Ea2474D783D6C69233742",
-        //     ),
-        //     ["privado:test"]: new resolver.EthStateResolver(
-        //         "https://rpc-testnet.privado.id/",
-        //         "0x975556428F077dB5877Ea2474D783D6C69233742",
-        //     ),
-         };
-
-        const verifier = await auth.Verifier.newVerifier({
-            stateResolver: resolvers,
-            circuitsDir: path.join(__dirname, keyDIR),
-            ipfsGatewayURL: "https://ipfs.io",
-        });
-
-            const opts = {
-                acceptedStateTransitionDelay: 5 * 60 * 1000, // 5 minute
-            };
-            const authResponse = await verifier.fullVerify(tokenStr, authRequest, opts);
-
-            verificationMap.set(verificationId, {
-                status: 'completed',
-                token: tokenStr,
-                result: authResponse
-            });
-
-            return res
-                .status(200)
-                .set("Content-Type", "application/json")
-                .send({});
-
-    // const verifier = await getVerifier();
-
-    // const result = await verifier.fullVerify(
-    //   tokenStr,
-    //   stored.request,
-    //   { acceptedStateTransitionDelay: 5 * 60 * 1000 }
+    // const PRIVADO_MAIN_STATE_RESOLVER = new resolver.EthStateResolver(
+    //   process.env.RPC_URL_MAIN,
+    //   process.env.STATE_CONTRACT_MAIN
     // );
 
-    // verificationMap.set(verificationId, {
-    //   status: "completed",
-    //   result
-    // });
+    const AMOY_STATE_RESOLVER = new resolver.EthStateResolver(
+      process.env.RPC_URL_AMOY,
+      process.env.STATE_CONTRACT_AMOY
+    );
 
-    // console.log("Verification SUCCESS");
+    const resolvers = {
+      ["privado:main"]: PRIVADO_MAIN_STATE_RESOLVER,
+      ["polygon:amoy"]: AMOY_STATE_RESOLVER
+    };
 
-    // res.json({ success: true });
+    const verifier = await auth.Verifier.newVerifier({
+      stateResolver: resolvers,
+      circuitsDir: path.join(__dirname, keyDIR),
+      ipfsGatewayURL: "https://ipfs.io"
+    });
+
+    const opts = {
+      acceptedStateTransitionDelay: 5 * 60 * 1000 // 5 minutes
+    };
+
+    const authResponse = await verifier.fullVerify(tokenStr, authRequest, opts);
+
+    verificationMap.set(verificationId, {
+      status: "completed",
+      token: tokenStr,
+      result: authResponse
+    });
+
+    return res
+      .status(200)
+      .set("Content-Type", "application/json")
+      .send({});
+
+
 
   } catch (err) {
     console.error("Verification FAILED:", err.message);
