@@ -1,0 +1,124 @@
+/* Background */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  color: #111;
+}
+
+/* Layout */
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  height: 70px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Wallet top-right */
+.header-wallet {
+  position: absolute;
+  right: 30px;
+}
+
+.wallet-btn {
+  background: #f59e0b;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.wallet-connected {
+  font-size: 14px;
+  background: rgba(255,255,255,0.1);
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+/* Main center */
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Glass Card */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  text-align: center;
+  width: 420px;
+  animation: fadeIn 0.5s ease;
+}
+
+.card-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.card-subtitle {
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+/* QR */
+.qr-wrapper {
+  margin: 20px 0;
+}
+
+/* Button */
+.primary-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Status */
+.status {
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.status.pending { color: #f59e0b; }
+.status.inprogress { color: #2563eb; }
+.status.completed { color: #16a34a; }
+.status.failed { color: #dc2626; }
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

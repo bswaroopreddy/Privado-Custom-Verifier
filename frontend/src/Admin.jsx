@@ -1,9 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 
 export default function Admin() {
   const [address, setAddress] = useState("");
-  const [did, setDid] = useState("");
 
   const connectMetamask = async () => {
     if (!window.ethereum) {
@@ -15,34 +13,23 @@ export default function Admin() {
       method: "eth_requestAccounts"
     });
 
-    const addr = accounts[0];
-    setAddress(addr);
-
-    const verifierDid =
-      `did:polygonid:polygon:amoy:${addr}`;
-
-    setDid(verifierDid);
-
-    await axios.post("http://localhost:8080/api/set-verifier-did", {
-      did: verifierDid
-    });
-
-    alert("Verifier DID registered");
+    setAddress(accounts[0]);
   };
 
   return (
-    <div>
-      <h2>Verifier Setup</h2>
-      <button onClick={connectMetamask}>
-        Connect MetaMask
-      </button>
-
-      {did && (
-        <>
-          <p>Address: {address}</p>
-          <p>DID: {did}</p>
-        </>
+    <>
+      {!address ? (
+        <button
+          className="wallet-btn"
+          onClick={connectMetamask}   // ✅ FIX
+        >
+          Connect MetaMask
+        </button>
+      ) : (
+        <div className="wallet-connected">
+          Connected: {address.slice(0,6)}...{address.slice(-4)}
+        </div>
       )}
-    </div>
+    </>
   );
 }

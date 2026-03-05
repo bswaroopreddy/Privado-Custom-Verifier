@@ -10,7 +10,6 @@ const path = require("path");
 const { createUniversityRequest } = require("./requestBuilder");
 
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,6 +19,9 @@ const PORT = process.env.PORT || 8080;
 const requestMap = new Map();
 const verificationMap = new Map();
 const shortUrlMap = new Map();
+
+app.use(express.text({ type: "*/*" }));
+
 
 /* -----------------------------------
    NGROK FIX
@@ -95,6 +97,8 @@ app.get("/requestjson/:id", (req, res) => {
    3. CALLBACK
 ----------------------------------- */
 app.post("/api/callback", async (req, res) => {
+  console.log("Callback received from wallet");
+  console.log("CALLBACK HIT:", req.query.sessionId);
   try {
     const sessionId = req.query.sessionId;
     const stored = requestMap.get(sessionId);
@@ -103,9 +107,11 @@ app.post("/api/callback", async (req, res) => {
     console.log(authRequest);
     console.log("\n");
     console.log(sessionId);
-    const raw = await getRawBody(req);
+    // const raw = await getRawBody(req);
 
-    const tokenStr = raw.toString();
+    // const tokenStr = raw.toString();
+
+    const tokenStr = req.body;
     console.log(tokenStr);
 
     const verificationId = stored.verificationId;
@@ -116,10 +122,10 @@ app.post("/api/callback", async (req, res) => {
 
     const keyDIR = "./keys";
 
-    // const PRIVADO_MAIN_STATE_RESOLVER = new resolver.EthStateResolver(
-    //   process.env.RPC_URL_MAIN,
-    //   process.env.STATE_CONTRACT_MAIN
-    // );
+    const PRIVADO_MAIN_STATE_RESOLVER = new resolver.EthStateResolver(
+      process.env.RPC_URL_MAIN,
+      process.env.STATE_CONTRACT_MAIN
+    );
 
     const AMOY_STATE_RESOLVER = new resolver.EthStateResolver(
       process.env.RPC_URL_AMOY,
